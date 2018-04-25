@@ -1,5 +1,12 @@
 class Api::ItemsController < ApiController
-  before_action :authenticated?
+  before_action :authenticated?, only:[:create]
+  before_action :authenticated_for_item_index?, only:[:index]
+  before_action :authenticated_for_item?, only:[:update, :destroy]
+
+  def index
+    items = Item.where('list_id = ?', params[:list_id])
+    render json: items, each_serializer: ItemSerializer
+  end
 
   def create
     item = Item.new(item_params)
